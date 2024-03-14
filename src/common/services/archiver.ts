@@ -79,9 +79,11 @@ export default class ArchiveBoxArchiver extends EventEmitter implements IArchive
     const baseUrl = await this.config.get(GlobalConfigKey.ArchiveBoxBaseUrl, "")
     const tags = await this.config.get(GlobalConfigKey.Tags, "")
 
+    console.log(`Sending ${urls.length} URLs to ${baseUrl}`)
     if (baseUrl === "") return
 
     const granted = await this.requestPermissionsForHost(baseUrl)
+    console.log(`Granted: ${granted}`)
     if (!granted) return false
 
     const body = new FormData()
@@ -93,6 +95,7 @@ export default class ArchiveBoxArchiver extends EventEmitter implements IArchive
     this.addQueuedUrlCount(urls.length)
 
     try {
+      console.log(`Sending body: ${body}`)
       await fetch(`${baseUrl}/add/`, {
         method: "post",
         credentials: "include",

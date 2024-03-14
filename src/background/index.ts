@@ -36,6 +36,20 @@ async function main() {
     }
   })
 
+  //新增快捷键
+  chrome.commands.onCommand.addListener((command) => {
+    if (command === 'archive-current-page') {
+      console.log(`command exec : ${command}`);
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        console.log(`tabs.length  : ${tabs.length},${JSON.stringify(tabs)} >>>>>>>>>>> ${JSON.stringify(tabs[0])} >>>>>>>>>> ${tabs[0].url}`);
+        if (tabs.length > 0 && tabs[0].url) {
+          console.log(`tabs[0].url  : ${tabs[0].url}`);
+          await archiver.archiveImmediately(tabs[0].url);
+        }
+      });
+    }
+  });
+
   chrome.history.onVisited.addListener(async historyItem => {
     const shouldArchive = await archiver.shouldArchive(historyItem.url)
     if (!shouldArchive) return
